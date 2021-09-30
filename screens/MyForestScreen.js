@@ -1,56 +1,65 @@
-import React from "react";
-import { Text, View, StyleSheet, Dimensions } from "react-native";
-import MapView from "react-native-maps";
-import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
-export default class MyForestScreen extends React.Component {
-  state = {
-    mapRegion: null,
-    hasLocationPermissions: false,
-    locationResult: null,
-  };
+import * as React from "react";
+import {
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  View,
+  Text,
+  Button,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import firebase from "firebase";
+const { width } = Dimensions.get("screen");
+import db from "../config";
 
-  componentDidMount() {
-    this._getLocationAsync();
-  }
+import { Header, Icon, Badge } from "react-native-elements";
 
-  _handleMapRegionChange = (mapRegion) => {
-    console.log(mapRegion);
-    this.setState({ mapRegion });
-  };
-
-  _getLocationAsync = async () => {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== "granted") {
-      this.setState({
-        locationResult: "Permission to access location was denied",
-      });
-    } else {
-      this.setState({ hasLocationPermissions: true });
-    }
-
-    const location = await Location.getCurrentPositionAsync({});
-    this.setState({ locationResult: JSON.stringify(location) });
-    // Location: {this.state.locationResult}
-    // Center the map on the location we just fetched.
-    this.setState({
-      mapRegion: {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      },
-    });
-  };
-
+export default class MyForest extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <MapView
-          style={styles.mapStyle}
-          region={this.state.mapRegion}
-          onRegionChange={this.handleMapRegionChange}
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#fff",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: -25,
+          backgroundColor: "#1B2E0F",
+        }}
+      >
+        <Header
+          centerComponent={{
+            text: "GreenPin",
+            style: { color: "#90A5A9", fontSize: 20, fontWeight: "bold" },
+          }}
+          rightComponent={
+            <Icon
+              name="qrcode"
+              type="font-awesome"
+              color="black"
+              onPress={() => {
+                this.props.navigation.navigate("QRCode");
+              }}
+            />
+          }
+          backgroundColor="#eaf8fe"
         />
+        <Text
+          style={{
+            flex: 1,
+            backgroundColor: "#fff",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 300,
+            fontSize: 23,
+            backgroundColor: "#1B2E0F",
+            color: "#73FA79",
+          }}
+        >
+          Problem with React Native Maps.
+        </Text>
       </View>
     );
   }
@@ -62,8 +71,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: -710,
   },
-  mapStyle: {
+  map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
